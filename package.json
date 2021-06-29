@@ -1,10 +1,10 @@
 {
-  "name": "puppeteer",
-  "version": "10.1.0",
-  "description": "A high-level API to control headless Chrome over the DevTools Protocol",
+  "name": "@recordreplay/puppeteer",
+  "version": "10.1.1",
+  "description": "Replay enabled puppeteer fork",
   "main": "./cjs-entry.js",
   "types": "lib/types.d.ts",
-  "repository": "github:puppeteer/puppeteer",
+  "repository": "https://github.com/RecordReplay/puppeteer",
   "engines": {
     "node": ">=10.18.1"
   },
@@ -17,9 +17,7 @@
     "assert-unit-coverage": "cross-env COVERAGE=1 mocha --config mocha-config/coverage-tests.js",
     "funit": "cross-env PUPPETEER_PRODUCT=firefox npm run unit",
     "test": "npm run tsc && npm run lint --silent && npm run unit-with-coverage && npm run test-browser",
-    "prepare": "node typescript-if-required.js",
-    "prepublishOnly": "npm run build",
-    "dev-install": "npm run tsc && node install.js",
+    "dev-install": "node install.js",
     "install": "node install.js",
     "eslint": "([ \"$CI\" = true ] && eslint --ext js --ext ts --quiet -f codeframe . || eslint --ext js --ext ts .)",
     "eslint-fix": "eslint --ext js --ext ts --fix .",
@@ -112,5 +110,5 @@
     "text-diff": "1.0.1",
     "ts-node": "9.1.1",
     "typescript": "4.2.4"
-  },
+  }
 }
