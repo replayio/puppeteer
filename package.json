@@ -1,6 +1,6 @@
 {
   "name": "@recordreplay/puppeteer",
-  "version": "10.1.1",
+  "version": "10.1.2",
   "description": "Replay enabled puppeteer fork",
   "main": "./cjs-entry.js",
   "types": "lib/types.d.ts",

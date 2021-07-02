@@ -87,14 +87,14 @@ async function download() {
     return;
   }
 
-  downloadBrowser();
+  if (process.platform == "linux") {
+    downloadReplay();
+  } else {
+    downloadBrowser();
+  }
 }
 
-if (process.platform == "linux") {
-  downloadReplay();
-} else {
-  download();
-}
+download();
 
 async function downloadReplay() {
   console.log("Installing replay browser...");
