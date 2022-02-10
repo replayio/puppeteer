@@ -24,7 +24,11 @@
  * necessary.
  */
 
-const compileTypeScriptIfRequired = require('./typescript-if-required.js');
+const fs = require("fs");
+const https = require("https");
+const { spawnSync } = require("child_process");
+
+const compileTypeScriptIfRequired = require('./typescript-if-required');
 
 async function download() {
   await compileTypeScriptIfRequired();
@@ -83,7 +87,82 @@ async function download() {
     return;
   }
 
-  downloadBrowser();
+  if (process.platform == "linux") {
+    downloadReplay();
+  } else {
+    downloadBrowser();
+  }
 }
 
 download();
+
+async function downloadReplay() {
+  console.log("Installing replay browser...");
+  await installReplayBrowser("linux-replay-chromium.tar.xz", "replay-chromium", "chrome-linux");
+  console.log("Done.");
+}
+
+async function installReplayBrowser(name, srcName, dstName) {
+  const replayDir = process.env.RECORD_REPLAY_DIRECTORY || `${process.env.HOME}/.replay`;
+  if (fs.existsSync(`${replayDir}/puppeteer/${dstName}`)) {
+    return;
+  }
+
+  const contents = await downloadReplayFile(name);
+
+  for (const dir of [replayDir, `${replayDir}/puppeteer`]) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  }
+  fs.writeFileSync(`${replayDir}/puppeteer/${name}`, contents);
+  spawnSync("tar", ["xf", name], { cwd: `${replayDir}/puppeteer` });
+  fs.unlinkSync(`${replayDir}/puppeteer/${name}`);
+
+  if (srcName != dstName) {
+    fs.renameSync(`${replayDir}/puppeteer/${srcName}`, `${replayDir}/puppeteer/${dstName}`);
+  }
+}
+
+async function downloadReplayFile(downloadFile) {
+  const options = {
+    host: "static.replay.io",
+    port: 443,
+    path: `/downloads/${downloadFile}`,
+  };
+
+  for (let i = 0; i < 5; i++) {
+    const waiter = defer();
+    const request = https.get(options, response => {
+      if (response.statusCode != 200) {
+        console.log(`Download received status code ${response.statusCode}, retrying...`);
+        request.destroy();
+        waiter.resolve(null);
+        return;
+      }
+      const buffers = [];
+      response.on("data", data => buffers.push(data));
+      response.on("end", () => waiter.resolve(buffers));
+    });
+    request.on("error", err => {
+      console.log(`Download error ${err}, retrying...`);
+      request.destroy();
+      waiter.resolve(null);
+    });
+    const buffers = await waiter.promise;
+    if (buffers) {
+      return Buffer.concat(buffers);
+    }
+  }
+
+  throw new Error("Download failed, giving up");
+}
+
+function defer() {
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
