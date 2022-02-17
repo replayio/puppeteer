@@ -306,29 +306,24 @@ export declare class Mouse {
      * Dispatches a `drag` event.
      * @param start - starting point for drag
      * @param target - point to drag to
-     * ```
      */
     drag(start: Point, target: Point): Promise<Protocol.Input.DragData>;
     /**
      * Dispatches a `dragenter` event.
      * @param target - point for emitting `dragenter` event
-     * ```
+     * @param data - drag data containing items and operations mask
      */
     dragEnter(target: Point, data: Protocol.Input.DragData): Promise<void>;
     /**
      * Dispatches a `dragover` event.
      * @param target - point for emitting `dragover` event
-     * ```
+     * @param data - drag data containing items and operations mask
      */
     dragOver(target: Point, data: Protocol.Input.DragData): Promise<void>;
     /**
      * Performs a dragenter, dragover, and drop in sequence.
      * @param target - point to drop on
      * @param data - drag data containing items and operations mask
-     * @param options - An object of options. Accepts delay which,
-     * if specified, is the time to wait between `dragover` and `drop` in milliseconds.
-     * Defaults to 0.
-     * ```
      */
     drop(target: Point, data: Protocol.Input.DragData): Promise<void>;
     /**
@@ -338,7 +333,6 @@ export declare class Mouse {
      * @param options - An object of options. Accepts delay which,
      * if specified, is the time to wait between `dragover` and `drop` in milliseconds.
      * Defaults to 0.
-     * ```
      */
     dragAndDrop(start: Point, target: Point, options?: {
         delay?: number;

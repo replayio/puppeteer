@@ -36,7 +36,7 @@ async function download() {
   const {
     downloadBrowser,
     logPolitely,
-  } = require('./lib/cjs/puppeteer/node/install');
+  } = require('./lib/cjs/puppeteer/node/install.js');
 
   if (process.env.PUPPETEER_SKIP_DOWNLOAD) {
     logPolitely(
